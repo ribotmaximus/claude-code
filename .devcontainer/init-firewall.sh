@@ -72,12 +72,19 @@ for domain in \
     "statsig.com" \
     "marketplace.visualstudio.com" \
     "vscode.blob.core.windows.net" \
-    "update.code.visualstudio.com"; do
+    "update.code.visualstudio.com" \
+    "prod-coglode-next-us-ea.rp6qpvn.mongodb.net" \
+    "ac-qgyvjj6-shard-00-00.rp6qpvn.mongodb.net" \
+    "ac-qgyvjj6-shard-00-01.rp6qpvn.mongodb.net" \
+    "ac-qgyvjj6-shard-00-02.rp6qpvn.mongodb.net" \
+    "api.openai.com" \
+    "api.stripe.com" \
+    "resend.com"; do
     echo "Resolving $domain..."
     ips=$(dig +noall +answer A "$domain" | awk '$4 == "A" {print $5}')
     if [ -z "$ips" ]; then
-        echo "ERROR: Failed to resolve $domain"
-        exit 1
+        echo "WARNING: Failed to resolve $domain (may be SRV-only record)"
+        continue
     fi
     
     # Deduplicate IPs and add with tolerance
