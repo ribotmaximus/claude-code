@@ -80,14 +80,15 @@ for domain in \
         exit 1
     fi
     
-    while read -r ip; do
+    # Deduplicate IPs and add with tolerance
+    echo "$ips" | sort -u | while read -r ip; do
         if [[ ! "$ip" =~ ^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$ ]]; then
             echo "ERROR: Invalid IP from DNS for $domain: $ip"
             exit 1
         fi
         echo "Adding $ip for $domain"
-        ipset add allowed-domains "$ip"
-    done < <(echo "$ips")
+        ipset add allowed-domains "$ip" 2>/dev/null || true
+    done
 done
 
 # Get host IP from default route
